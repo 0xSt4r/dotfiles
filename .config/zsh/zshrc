@@ -1,0 +1,131 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
+#!/usr/bin/env zsh
+
+# History file configuration
+[ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
+[ "$HISTSIZE" -lt 50000 ] && HISTSIZE=50000
+[ "$SAVEHIST" -lt 10000 ] && SAVEHIST=10000
+
+# History command configuration
+setopt extended_history       # record timestamp of command in HISTFILE
+# setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+# setopt hist_ignore_dups       # ignore duplicated commands history list
+# setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt share_history          # share command history data
+
+if [[ ! -f "${HOME}/.zgenom/zgenom.zsh" ]]; then
+  # install zgenom if is not installed
+  git clone https://github.com/jandamm/zgenom.git "${HOME}/.zgenom"
+fi
+
+source "${HOME}/.zgenom/zgenom.zsh"
+
+# Check for plugin and zgenom updates every 7 days
+# This does not increase the startup time.
+zgenom autoupdate
+
+# if the init script doesn't exist
+if ! zgenom saved; then
+  echo "Initializing zgenom"
+  rm -f "$HOME"/*.zwc(N) \
+        "$XDG_CACHE_HOME"/zsh/*(N) \
+        "$ZGEN_INIT.zwc"
+
+  # specify plugins here
+  # NOTE Be extra careful about plugin load order, or subtle breakage can
+  #   emerge. This is the best order I've sussed out for these plugins.
+  zgenom load junegunn/fzf shell
+  # zgenom load jeffreytse/zsh-vi-mode
+  zgenom load zdharma-continuum/fast-syntax-highlighting
+  zgenom load zsh-users/zsh-completions src
+  zgenom load zsh-users/zsh-autosuggestions
+  # zgenom load zsh-users/zsh-syntax-highlighting
+  zgenom load zsh-users/zsh-history-substring-search
+  zgenom load romkatv/powerlevel10k powerlevel10k
+  # zgenom load hlissner/zsh-autopair autopair.zsh
+  zgenom load ohmyzsh/ohmyzsh plugins/sudo
+  zgenom load ohmyzsh/ohmyzsh plugins/docker-compose
+  zgenom load ohmyzsh/ohmyzsh plugins/docker-machine
+  zgenom load marlonrichert/zsh-autocomplete
+
+  # generate the init script from plugins above
+  zgenom save
+
+  # Compile your zsh files
+  zgenom compile "$HOME/.zshrc"
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Install starship
+# if ! command -v starship &> /dev/null; then
+#     curl -sS https://starship.rs/install.sh | sh
+# fi 
+# eval "$(starship init zsh)"
+
+# Alias for vim
+alias nv='nvim'
+
+alias icat="kitty +kitten icat"
+
+alias ll='exa --long --level=2 --classify --icons --all --sort=name --group-directories-first --header --git'
+
+# Alias for ls
+alias ls='ls --color=auto'
+alias la='ls -lha --color=auto'
+alias lt='ls -lt --color=auto'
+alias ls-size='ls -lhS --color=auto'
+# alias ll='ls -lh --color=auto'
+alias la='ls -lha --color=auto'
+
+# Alias for cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+
+# Alias for df with colors
+alias df='df -hT --color=auto'
+
+# Alias for du with details and sorted by size
+alias du='du -h --max-depth=1 | sort -h'
+
+# Alias for grep with color highlighting
+alias grep='grep --color=auto'
+
+# Alias for ping with connectivity testing 5 times
+alias ping='ping -c 5'
+
+# Alias for ps with details
+alias ps='ps -auxf'
+
+# Alias for tail with real-time tracking
+alias tailf='tail -f'
+
+# Alias for tar with gzip compression
+alias tarz='tar -cvzf'
+alias tarxz='tar -xvzf'
+
+# Alias for tar with bzip2 compression
+alias tarj='tar -cvjf'
+alias taxj='tar -xvjf'
+
+# Go
+export GO111MODULE=on
+
+export EDITOR=nvim
