@@ -85,7 +85,11 @@ alias nv='nvim'
 
 alias icat="kitty +kitten icat"
 
-alias ll='exa --long --level=2 --classify --icons --all --sort=name --group-directories-first --header --git'
+if [[ `uname -s` = 'Darwin' ]]; then
+  alias ll='eza --long --level=2 --classify --icons --all --sort=name --group-directories-first --header --git'
+else 
+  alias ll='exa --long --level=2 --classify --icons --all --sort=name --group-directories-first --header --git'
+fi
 
 # Alias for ls
 alias ls='ls --color=auto'
